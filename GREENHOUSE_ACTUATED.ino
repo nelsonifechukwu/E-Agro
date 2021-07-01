@@ -1,4 +1,7 @@
-//
+//DHT SENSOR 32
+//LDR 33
+//FAN CONTROL 21
+//LIGHT CONTROL 23
 
 
 #include <Blynk.h>
