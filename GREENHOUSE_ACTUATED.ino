@@ -1,11 +1,13 @@
+//
+
 
 #include <Blynk.h>
 #include <BlynkSimpleEsp32.h>
 #define BLYNK_PRINT Serial
 
-const char* ssid = "iotshowcam";
-const char* password = "iotshowcam";
-char auth[] = "GBD8TaUNR6LiDcJqfIGkH4Fz7mmHuGSd"; 
+const char* ssid = "";
+const char* password = "";
+char auth[] = ""; 
 
 //#ifdef ESP32
   #include <WiFi.h>
@@ -117,15 +119,20 @@ lightIntensity = analogRead(LDR);
   if (t > setTemperature)
   {
     digitalWrite (fan, HIGH); //Turn fan ON
-    digitalWrite (redlight, LOW);//Turn alarm light ON
+    digitalWrite (redlight, LOW);//Turn alarm light ON, PULL-UP resistor
     } else{
           digitalWrite (fan, LOW); //Turn fan OFF
     digitalWrite (redlight, HIGH); //Turn alarm light OFF
       }
   if (lightIntensity < setLightIntensity)
   {
-    digitalWrite (light, HIGH);
+    digitalWrite (light, HIGH); //Turn light ON
     } 
+else{
+         
+    digitalWrite (light, LOW); //Turn  light OFF
+      }
+    
 
       //SEND TO BLYNK 
   Blynk.virtualWrite(V2, t); 
@@ -155,3 +162,5 @@ lightIntensity = analogRead(LDR);
 //  
 //  }
 //
+
+
