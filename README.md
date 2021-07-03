@@ -7,3 +7,5 @@ The aim of this project is to design an IoT to improve crop production by monito
 -To implement and deploy a Smart greenhouse monitoring and control system
 
 ## How to Use
+
++ Kill yourself first
