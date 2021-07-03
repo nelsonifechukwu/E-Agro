@@ -8,4 +8,4 @@ The aim of this project is to design an IoT to improve crop production by monito
 
 ## How to Use
 
-+ Kill yourself first
+
