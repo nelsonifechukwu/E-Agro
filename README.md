@@ -1,6 +1,6 @@
 # Greenhouse-mini-IoT
 
-The aim of this project is to design an IoT to improve crop production by monitoring and controlling factors (light, air, and temperature and soil moisture) that affect the production using _Blynk_. The objectives of this project are:
+The aim of this project is to design an IoT to improve crop production by monitoring and controlling factors (light, air, and temperature and soil moisture) that affect the production using <h5> Blynk </h5>. The objectives of this project are:
 
 + To identify the different environmental factors that enhance optimal crop growth.
 + To design a Smart greenhouse monitoring and control system
@@ -8,7 +8,8 @@ The aim of this project is to design an IoT to improve crop production by monito
 
 ## How to Use
 
-- Set Up your circuit connection
+- Set Up your circuit connection 
+
 
 - Fill in your credentials such as:
   - ssid of your router
