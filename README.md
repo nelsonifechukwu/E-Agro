@@ -12,6 +12,7 @@ The aim of this project is to design an IoT to improve crop production by monito
 
 
 - Fill in your credentials such as:
+
   - ssid of your router
   - password of your router
   - auth key from blynk
