@@ -10,17 +10,18 @@ The aim of this project is to design an IoT system to improve crop production by
 ## How to Use
 
 - Set Up your circuit connection 
+- <img width="734" alt="Screen Shot 2021-12-08 at 00 16 31" src="https://user-images.githubusercontent.com/44223263/145120527-147a61e3-91ce-40ac-8603-b53845515fa2.png">
 
 
-- Fill in your credentials such as:
 
-  - ssid of your router
-  - password of your router
+- Edit the .ino file with your credentials such as:
+
+  - ssid and password of your router
   - auth key from blynk
   
 - Upload the .ino file in your ESP32
 
-- Setup your blynk
+- Setup your blynk. To know more about blynk, click here https://www.youtube.com/watch?v=rJQ2SKkKuSM
 
 
 
