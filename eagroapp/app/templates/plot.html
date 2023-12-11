@@ -1,0 +1,398 @@
+<html lang="en">
+  <head>
+    <link
+      href="{{ url_for('static', filename= 'css/plotstyle.css') }}"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <!--<link href="{{ url_for('static', filename= 'css/style.css') }}" rel="stylesheet" type="text/css" media="all"> -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+    <!--<meta http-equiv="refresh" content="5">-->
+    <title>GREENHOUSE STATUS</title>
+    <!-- HIGH CHART-->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <div class="alert_green">
+        <!-- <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> -->
+        {{ message }}
+      </div>
+      <script>
+        // Fade out the alert box after 3 seconds
+        setTimeout(function () {
+          var alertBox = document.querySelector(".alert_green");
+          alertBox.style.opacity = "0";
+          alertBox.style.transition = "opacity 1s ease-in-out";
+          setTimeout(function () {
+            alertBox.remove();
+          }, 1000);
+        }, 800);
+      </script>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+    <header class="header">
+      <p class="logo">Welcome, Osahon.I</p>
+
+      <span style="display: flex">
+        <!--DELETE ALL DATA-->
+        <form action="/delete" method="post">
+          <input type="submit" class="buttonstyle" onclick="handleDelete()" value="CLEAR ALL DATA" />
+        </form>
+        <!-- LOGOUT -->
+        <form action="/logout" method="post">
+          <input type="submit" class="logout" value="LOGOUT" />
+        </form>
+      </span>
+    </header>
+
+    <!--HIGH CHART -->
+    <div class="jumbotron"></div>
+    <br />
+    <br />
+    <div class="layout">
+      <div class="container-fluid">
+        <div class="container control">
+          <h2 class="ctrl-header">Control Panel</h2>
+          <div style="display: flex; flex-direction: row; align-items: center">
+            <div class="ctrl-btn">
+              <div style="display: flex; margin-left: 190px; gap: 100px">
+                <p>Controls</p>
+                <p>Value</p>
+                <p style="margin-left: -70px">Set Range</p>
+              </div>
+              <div class="ctrl">
+                <p style="width: 130px">Fan Control 💨</p>
+                <button
+                  style="margin-left: 20px"
+                  class="on-button"
+                  id="button-c1"
+                  onclick="updateState('c1')"
+                ></button>
+                <p class="ctrl-value" id="ctrl-value-1"></p>
+              </div>
+
+              <div class="ctrl">
+                <p style="width: 130px">Light Control 💡</p>
+                <button
+                  style="margin-left: 20px"
+                  class="on-button"
+                  id="button-c2"
+                  onclick="updateState('c2')"
+                ></button>
+                <p class="ctrl-value" id="ctrl-value-2"></p>
+              </div>
+
+              <div class="ctrl">
+                <p style="width: 130px">Pump Control 🌊</p>
+                <button
+                  style="margin-left: 20px"
+                  class="on-button"
+                  id="button-c3"
+                  onclick="updateState('c3')"
+                ></button>
+                <p class="ctrl-value" id="ctrl-value-3"></p>
+              </div>
+            </div>
+
+            <div class="ctrl-form">
+              <input
+                type="number"
+                name="form-c1"
+                id="form-c1"
+                class="btn-input"
+              />
+              <div style="display: flex; align-items: center">
+                <input
+                  type="number"
+                  name="form-c2"
+                  id="form-c2"
+                  class="btn-input"
+                />
+                <button
+                  style="margin-left: 20px"
+                  class="ctrl-form-btn"
+                  onclick="updateInput()"
+                >
+                  Submit
+                </button>
+              </div>
+
+              <input
+                type="number"
+                name="form-c3"
+                id="form-c3"
+                class="btn-input"
+              />
+            </div>
+          </div>
+        </div>
+
+        {% for i in range(1, 6) %}
+        <div class="container">
+          <div id="c{{ i }}"></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+
+  <script src="https://smtpjs.com/v3/smtp.js"></script>
+
+  <script>
+    // define num1 and num2 variables
+    let num1 = 10;
+    let num2 = 15;
+
+    function updateButton(button, newText) {
+      button.textContent = newText;
+    }
+
+    for (let id = 1; id <= 3; id++) {
+      fetch(`/get_state/c${id}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const button = document.getElementById(`button-c${id}`);
+          console.log("data: ", data);
+          if (parseInt(data) === 1) {
+            console.log("button: ON");
+            button.className = "on-button";
+            button.textContent = "ON";
+          } else {
+            console.log("button: OFF");
+            button.className = "off-button";
+            button.textContent = "OFF";
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching value:", error);
+        });
+    }
+
+    for (let i = 1; i <= 3; i++) {
+      fetch(`/get_control_input/c${i}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const value = document.getElementById(`ctrl-value-${i}`);
+          console.log("Form Value: ", data);
+          value.textContent = parseInt(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching value: ", error);
+        });
+    }
+
+    function updateInput() {
+      let b1 = document.getElementById("form-c1").value;
+      let b2 = document.getElementById("form-c2").value;
+      let b3 = document.getElementById("form-c3").value;
+      if (b1 && b2 && b3) {
+        fetch(`/insert/${b1}/${b2}/${b3}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }).then(() => {
+          const value1 = document.getElementById(`ctrl-value-1`);
+          value1.textContent = parseInt(b1);
+
+          const value2 = document.getElementById(`ctrl-value-2`);
+          value2.textContent = parseInt(b2);
+
+          const value3 = document.getElementById(`ctrl-value-3`);
+          value3.textContent = parseInt(b3);
+        });
+      } else {
+        alert("Please fill all control inputs");
+      }
+    }
+
+    fetch("/data/arr")
+      .then((response) => response.text())
+      .then((data1) => {
+        fetch("/get_control_input")
+          .then((response) => response.text())
+          .then((data2) => {
+            data1 = data1.split(', ');
+            data2 = data2.split(', ');
+            console.log("Data 1: ", data1[1]);
+            console.log("Control 1: ", data2[0]);
+            if (data1[1] > data2[0]) {
+              console.log(`${data1[1]} is greater than ${data2[0]}`);
+              Email.send({
+                Host: "smtp.elasticemail.com",
+                Username: "jmikey301@gmail.com",
+                Password: "CFFD83B86850E80586C56C68B0EA4FBEDE5D",
+                To: "michealelijah301@gmail.com",
+                From: "jmikey301@gmail.com",
+                Subject: "Temperature is too high",
+                Body: `Temperature (${data1[1]}) is greater than Fan Speed (${data2[0]}) and system is getting hot`,
+              }).then((message) => alert(message));
+            }
+            if(data1[3] < data2[1]) {
+              console.log(`${data1[3]} is less than ${data2[1]}`);
+              Email.send({
+                Host: "smtp.elasticemail.com",
+                Username: "jmikey301@gmail.com",
+                // Password: "CFFD83B86850E80586C56C68B0EA4FBEDE5D",
+                To: "michealelijah301@gmail.com",
+                From: "jmikey301@gmail.com",
+                Subject: "Light Intensity is too low",
+                Body: `Light Intensity (${data1[3]}) is low, please adjust the light control (${data2[1]}).`,
+              }).then((message) => alert(message));
+          }
+          if(data1[4] < data2[2]) {
+              console.log(`${data1[4]} is less than ${data2[2]}`);
+              Email.send({
+                Host: "smtp.elasticemail.com",
+                Username: "jmikey301@gmail.com",
+                // Password: "CFFD83B86850E80586C56C68B0EA4FBEDE5D",
+                To: "michealelijah301@gmail.com",
+                From: "jmikey301@gmail.com",
+                Subject: "Soil Moisture is too low",
+                Body: `Soil Moisture (${data1[4]}) is really low, pump control is set at ${data2[2]} and is too low.`,
+              }).then((message) => alert(message));
+          }
+          });
+      });
+
+    //update state
+    function updateState(id) {
+      fetch(`/updatestate/button=${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.text())
+        .then((newState) => {
+          const button = document.getElementById(`button-${id}`);
+          console.log(newState);
+          if (newState === "1") {
+            updateButton(button, "ON");
+            button.className = "on-button";
+          } else {
+            updateButton(button, "OFF");
+            button.className = "off-button";
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating state:", error);
+        });
+    }
+
+      function handleDelete(){
+    localStorage.clear();
+  }
+
+
+    //Create Chart
+    function createChart(id, titleText, yAxisTitleText, dataPointIndex, col) {
+          let chartData = localStorage.getItem(`chartData-${id}`);
+  if (chartData) {
+    chartData = JSON.parse(chartData);
+  } else {
+    chartData = [];
+  }
+      const chart = new Highcharts.Chart({
+        chart: { renderTo: id },
+        title: { text: titleText },
+        series: [
+          {
+            showInLegend: false,
+            data: chartData,
+          },
+        ],
+        plotOptions: {
+          line: {
+            animation: false,
+            dataLabels: { enabled: true },
+          },
+          series: { color: col },
+        },
+        xAxis: {
+          type: "datetime",
+          dateTimeLabelFormats: { second: "%H:%M:%S" },
+        },
+        yAxis: { title: { text: yAxisTitleText } },
+        credits: { enabled: false },
+      });
+      setInterval(() => {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            const x = new Date().getTime();
+            const y = this.responseText;
+            //const y_strip = y.slice(1, -1);
+            const y_split = y.split(", ");
+            const y_plot = parseFloat(y_split[dataPointIndex]);
+
+            if (chart.series[0].data.length > 40) {
+              chart.series[0].addPoint([x, y_plot], true, true, true);
+            } else {
+              chart.series[0].addPoint([x, y_plot], true, false, true);
+            }
+          }
+          chartData = chart.series[0].data.map((point) => [point.x, point.y]);
+        localStorage.setItem(`chartData-${id}`, JSON.stringify(chartData));
+        };
+        xhttp.open("GET", "/data", true);
+        xhttp.send();
+      }, 5000);
+      return chart;
+    }
+
+    const c1 = createChart(
+      "c1",
+      "Channel 1",
+      "Temperature",
+      1, //because id takes position zero
+      "#f2ad0c"
+    );
+
+    const c2 = createChart("c2", "Channel 2", "Humidity", 2, "#16c5e0");
+
+    const c3 = createChart("c3", "Channel 3", "Light Intensity", 3, "#e0103d");
+
+    const c4 = createChart("c4", "Channel 4", "Soil Moisture", 4, "#3610e0");
+
+    const c5 = createChart("c5", "Channel 5", "CO2 Volume", 5, "#faa2a2");
+
+    function showToast(message) {
+      // Create the toast element
+      var toast = document.createElement("div");
+      toast.classList.add("toast");
+      toast.innerText = message;
+
+      // Add the toast to the container
+      var container = document.getElementById("toast-container");
+      container.appendChild(toast);
+
+      // Show the toast
+      setTimeout(function () {
+        toast.classList.add("fade-in");
+      }, 100);
+
+      // Hide the toast
+      setTimeout(function () {
+        toast.classList.add("fade-out");
+      }, 3000);
+
+      // Remove the toast from the container
+      setTimeout(function () {
+        container.removeChild(toast);
+      }, 3300);
+    }
+  </script>
+</html>
